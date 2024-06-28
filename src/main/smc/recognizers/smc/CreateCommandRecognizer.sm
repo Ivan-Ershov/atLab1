@@ -1,0 +1,104 @@
+%package recognizers.smc
+
+%class CreateCommandRecognizer
+%fsmclass CreateCommandRecognizerContext
+
+%access public
+%start Create::Space1
+
+%map Create %%
+    Space1 {
+        whitespace nil {}
+        symbol(s: Character)[(s == 'c')|(s == 'C')] SymbolC {}
+    }
+
+    SymbolC {
+        symbol(s: Character)[(s == 'r')|(s == 'R')] SymbolR {}
+    }
+
+    SymbolR {
+        symbol(s: Character)[(s == 'e')|(s == 'E')] SymbolE1 {}
+    }
+
+    SymbolE1 {
+        symbol(s: Character)[(s == 'a')|(s == 'A')] SymbolA {}
+    }
+
+    SymbolA {
+        symbol(s: Character)[(s == 't')|(s == 'T')] SymbolT {}
+    }
+
+    SymbolT {
+        symbol(s: Character)[(s == 'e')|(s == 'E')] SymbolE2 {}
+    }
+
+    SymbolE2 {
+        whitespace Space2 {}
+    }
+
+    Space2 {
+        whitespace nil {}
+        symbol(s: Character) Relation {save(s);}
+    }
+
+    Relation {
+        symbol(s: Character) nil {save(s);}
+        digit(s: Character) nil {save(s);}
+        whitespace Space3 {load();}
+        openParenthesis OpenParenthesis {load();}
+    }
+
+    Space3 {
+        whitespace nil {}
+        openParenthesis OpenParenthesis {}
+    }
+
+    OpenParenthesis {
+        whitespace nil {}
+        symbol(s: Character) Attribute {save(s);}
+    }
+
+    Attribute {
+        symbol(s: Character) nil {save(s);}
+        digit(s: Character) nil {save(s);}
+        comma OpenParenthesis {load();}
+        whitespace Space4 {load();}
+        closeParenthesis CloseParenthesis {load();}
+    }
+
+    Space4 {
+        comma OpenParenthesis {}
+        whitespace nil {}
+        closeParenthesis CloseParenthesis {}
+    }
+
+    CloseParenthesis {
+        whitespace nil {}
+        EOS Ok {accept();}
+    }
+
+    Ok {}
+
+    Error {
+        whitespace nil {}
+        openParenthesis nil {}
+        closeParenthesis nil {}
+        comma nil {}
+        symbol(s: Character) nil {}
+        digit(s: Character) nil {}
+        other nil {}
+        EOS nil {reject();}
+    }
+
+    Default {
+        whitespace Error {}
+        openParenthesis Error {}
+        closeParenthesis Error {}
+        comma Error {}
+        symbol(s: Character) Error {}
+        digit(s: Character) Error {}
+        other Error {}
+        EOS Error {}
+        reset Space1 {clear();}
+    }
+%%

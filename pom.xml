@@ -6,6 +6,7 @@
 
     <groupId>org.example</groupId>
     <artifactId>AT_LAB1</artifactId>
+    <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
@@ -13,5 +14,76 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>net.sf.smc</groupId>
+                <artifactId>smc-maven-plugin</artifactId>
+                <version>7.6.0</version>
+                <executions>
+                    <execution>
+                        <id>src-build</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>smc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirectory>src/main/smc/recognizers/smc</sourceDirectory>
+                            <targetDirectory>src/main/java</targetDirectory>
+                            <targetLanguage>java7</targetLanguage>
+                            <verbose>true</verbose>
+                            <debugLevel>1</debugLevel>
+                            <reflection>true</reflection>
+                            <serial>true</serial>
+                            <generic>true</generic>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>de.jflex</groupId>
+                <artifactId>jflex-maven-plugin</artifactId>
+                <version>1.9.1</version>
+                <configuration>
+                    <outputDirectory>src/main/java</outputDirectory>
+                    <verbose>true</verbose>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.jflex</groupId>
+            <artifactId>jflex</artifactId>
+            <version>1.9.1</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.smc</groupId>
+            <artifactId>smc-maven-plugin</artifactId>
+            <version>7.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.smc</groupId>
+            <artifactId>library</artifactId>
+            <version>7.6.0</version>
+        </dependency>
+    </dependencies>
 
 </project>

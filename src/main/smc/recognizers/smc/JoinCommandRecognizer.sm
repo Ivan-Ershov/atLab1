@@ -1,0 +1,79 @@
+%package recognizers.smc
+
+%class JoinCommandRecognizer
+%fsmclass JoinCommandRecognizerContext
+
+%access public
+%start Join::Space1
+
+%map Join %%
+    Space1 {
+        whitespace nil {}
+        symbol(s: Character) Relation1 {save(s);}
+    }
+
+    Relation1 {
+        symbol(s: Character) nil {save(s);}
+        digit(s: Character) nil {save(s);}
+        whitespace Space2 {load();}
+        EOS Ok {accept();}
+    }
+
+    Space2 {
+        whitespace nil {}
+        symbol(s: Character)[(s == 'j')|(s == 'J')] SymbolJ {}
+        EOS Ok {accept();}
+    }
+
+    SymbolJ {
+        symbol(s: Character)[(s == 'o')|(s == 'O')] SymbolO {}
+    }
+
+    SymbolO {
+        symbol(s: Character)[(s == 'i')|(s == 'I')] SymbolI {}
+    }
+
+    SymbolI {
+        symbol(s: Character)[(s == 'n')|(s == 'N')] SymbolN  {}
+    }
+
+    SymbolN {
+        whitespace Space3 {}
+    }
+
+    Space3 {
+        whitespace nil {}
+        symbol(s: Character) Relation2 {save(s);}
+    }
+
+    Relation2 {
+        symbol(s: Character) nil {save(s);}
+        digit(s: Character) nil {save(s);}
+        whitespace Space4 {load();}
+        EOS Ok {accept();}
+    }
+
+    Space4 {
+        whitespace nil {}
+        EOS Ok {accept();}
+    }
+
+    Ok {}
+
+    Error {
+        whitespace nil {}
+        symbol nil {}
+        digit nil {}
+        other nil {}
+        EOS nil {reject();}
+    }
+
+    Default {
+        whitespace Error {}
+        symbol(s: Character) Error {}
+        digit(s: Character) Error {}
+        other Error {}
+        EOS Error {}
+        reset Space1 {clear();}
+    }
+%%
